@@ -80,11 +80,8 @@ SocketFd  createSocketAndListen(const char *ip, short port, int backlog/* = 31*/
     if(sockfd < 0) return sockfd;
 
     setNonBlocking(sockfd, true);
-
     bind(sockfd, ip, port);
-
     listen(sockfd, backlog);
-
     return sockfd;
 }
 
