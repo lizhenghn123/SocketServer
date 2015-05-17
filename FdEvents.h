@@ -1,0 +1,175 @@
+﻿#ifndef ZL_FDEVENTS_H
+#define ZL_FDEVENTS_H
+#include <vector>
+#include <map>
+
+//#define FDEVENTS_TYPE_SELECT
+#define FDEVENTS_TYPE_EPOLL
+//#define FDEVENTS_TYPE_POLL
+
+#ifdef FDEVENTS_TYPE_EPOLL
+#include <sys/epoll.h>
+#elif FDEVENTS_TYPE_POLL
+#include <sys/poll.h>
+#elif FDEVENTS_TYPE_SELECT
+#include <sys/select.h>
+#endif
+
+#define FDEVENT_NONE    (0)
+#define FDEVENT_IN      (1<<0)
+#define FDEVENT_PRI     (1<<1)
+#define FDEVENT_OUT     (1<<2)
+#define FDEVENT_HUP     (1<<3)
+#define FDEVENT_ERR     (1<<4)
+
+class  FdEvent;
+class  FdEvents;
+
+typedef int (*eventCallback)(FdEvents *poller, FdEvent *fe);
+typedef int (*readCallback)(FdEvents *poller, FdEvent *fe);
+typedef int (*writeCallback)(FdEvents *poller, FdEvent *fe);
+
+class FdEvent
+{
+    friend class FdEvents;
+public:
+    static FdEvent*  newFdEvent(int fd);
+
+public:
+    int fd() const                 { return fd_; }
+    void set_fd(int fd)            { fd_ = fd; }
+    int events() const             { return events_; }
+    //void set_events(int events)    { revents_ = events; }
+    void enableReading()           { events_ |= (FDEVENT_IN|FDEVENT_PRI); }
+    void enableWriting()           { events_ |= FDEVENT_OUT; }
+    void enableAll()               { events_ |= (FDEVENT_IN|FDEVENT_PRI|FDEVENT_OUT); }
+    void disableReading()          { events_ &= ~(FDEVENT_IN|FDEVENT_PRI); }
+    void disableWriting()          { events_ &= ~FDEVENT_OUT; }
+    void disableAll()              { events_ = FDEVENT_NONE; }
+    bool isNoneEvent() const       { return events_ == FDEVENT_NONE; } 
+    void set_revents(int revents)  { revents_ = revents; }
+    int  revents() const           { return revents_; }
+
+public://private:
+    FdEvent(int fd);
+    ~FdEvent();
+
+public:
+    int fd_;
+    int events_;
+    int revents_;
+    eventCallback callback_;
+};
+
+
+FdEvents* createFdEvents();
+
+class FdEvents
+{
+public:
+    typedef std::vector<FdEvent *>          ChannelList;
+    typedef std::map<int, FdEvent *>        ChannelMap;
+
+public:
+    FdEvents();
+    virtual ~FdEvents();
+
+public:
+    bool hasChannel(const FdEvent *channel) const;
+    FdEvent* getChannel(int sock) const;
+
+public:
+    virtual int addFdEvent(int fd, eventCallback cb) { return 0; }
+    virtual int modFdEvent(int fd) { return 0; }
+    virtual int delFdEvent(int fd) { return 0; }
+
+    virtual int addFdEvent(FdEvent *fe) { return 0; }
+    virtual int modFdEvent(FdEvent *fe) { return 0; }
+    virtual int delFdEvent(FdEvent *fe) { return 0; }
+
+    virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs)=0;
+
+    virtual const char* getName() const { return "f"; }
+
+protected:
+    ChannelMap  channelMap_;
+
+private:
+//#ifdef FDEVENTS_TYPE_EPOLL
+//typedef std::vector<struct epoll_event> EpollEventList;
+//int  epollfd_;
+//EpollEventList events_;
+//#elif FDEVENTS_TYPE_POLL
+//typedef std::map<int, FdEvent *>  FdEventMap;
+//ChannelMap  channelMap_;
+//#elif FDEVENTS_TYPE_SELECT
+//#endif
+};
+
+class FdEventsEpoller : public FdEvents
+{
+public:
+    FdEventsEpoller();
+    ~FdEventsEpoller();
+
+public:
+    virtual int addFdEvent(int fd, eventCallback cb);
+    //virtual int modFdEvent(int fd);
+    //virtual int delFdEvent(int fd);
+
+    virtual int addFdEvent(FdEvent *fe);
+    virtual int modFdEvent(FdEvent *fe);
+    virtual int delFdEvent(FdEvent *fe);
+
+    virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
+
+    virtual const char* getName() const { return "linux_epoll"; }
+
+private:
+    bool update(FdEvent *fe, int operation);
+    void fireActiveChannels(int numEvents, ChannelList& fdevents) const;
+
+private:
+    typedef std::vector<struct epoll_event> EpollEventList;
+
+    int  epollfd_;
+    EpollEventList events_;
+};
+
+/**
+class FdEventsPoller : public FdEvents
+{
+public:
+    FdEventsPoller();
+    ~FdEventsPoller();
+
+public:
+    virtual int addFdEvent(FdEvent *fe);
+    virtual int modFdEvent(FdEvent *fe);
+    virtual int delFdEvent(FdEvent *fe);
+
+    virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
+
+    virtual const char* getName() const { return "linux_poll"; }
+
+
+};
+
+class FdEventsSelecter : public FdEvents
+{
+public:
+    FdEventsSelecter();
+    ~FdEventsSelecter();
+
+public:
+    virtual int addFdEvent(FdEvent *fe);
+    virtual int modFdEvent(FdEvent *fe);
+    virtual int delFdEvent(FdEvent *fe);
+
+    virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
+
+    virtual const char* getName() const { return "select"; }
+
+};
+**/
+#endif  /* ZL_FDEVENTS_H */
