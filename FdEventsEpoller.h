@@ -11,9 +11,7 @@ public:
 	~FdEventsEpoller();
 
 public:
-	virtual int addFdEvent(int fd, eventCallback cb);
-	//virtual int modFdEvent(int fd);
-	//virtual int delFdEvent(int fd);
+	virtual FdEvent* addFdEvent(int fd, eventCallback cb) = 0;
 
 	virtual int addFdEvent(FdEvent *fe);
 	virtual int modFdEvent(FdEvent *fe);

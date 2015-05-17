@@ -18,15 +18,16 @@ FdEventsEpoller::~FdEventsEpoller()
 	::close(epollfd_);
 }
 
-int FdEventsEpoller::addFdEvent(int fd, eventCallback cb)
+FdEvent* FdEventsEpoller::addFdEvent(int fd, eventCallback cb)
 {
 	assert(fd);
 	assert(!getChannel(fd));
 	//FdEvent *fe = new FdEvent(fd);
-	FdEvent *fe = FdEvent::newFdEvent(fd);
-	fe->events_ = (FDEVENT_IN | FDEVENT_HUP | FDEVENT_ERR);
-	fe->callback_ = cb;
-	return addFdEvent(fe);
+	FdEvent *fde = FdEvent::newFdEvent(fd);
+	fde->events_ = (FDEVENT_IN | FDEVENT_HUP | FDEVENT_ERR);
+	fde->callback_ = cb;
+	addFdEvent(fde);
+	return fde;
 }
 
 int FdEventsEpoller::addFdEvent(FdEvent *fe)

@@ -74,13 +74,11 @@ public:
     FdEvent* getChannel(int sock) const;
 
 public:
-    virtual int addFdEvent(int fd, eventCallback cb) { return 0; }
-    virtual int modFdEvent(int fd) { return 0; }
-    virtual int delFdEvent(int fd) { return 0; }
+	virtual FdEvent* addFdEvent(int fd, eventCallback cb) = 0;
 
-    virtual int addFdEvent(FdEvent *fe) { return 0; }
-    virtual int modFdEvent(FdEvent *fe) { return 0; }
-    virtual int delFdEvent(FdEvent *fe) { return 0; }
+	virtual int addFdEvent(FdEvent *fe) = 0;
+	virtual int modFdEvent(FdEvent *fe) = 0;
+	virtual int delFdEvent(FdEvent *fe) = 0;
 
     virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs) = 0;
 
