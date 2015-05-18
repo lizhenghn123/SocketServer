@@ -48,7 +48,7 @@ int FdEventsEpoller::modFdEvent(FdEvent *fe)
 		assert(getChannel(fd) == fe);
 		if (fe->isNoneEvent())
 		{
-			printf("EpollPoller::updateChannel [%d][%0x] NoneEvent\n", fd, fe);
+			printf("EpollPoller::updateChannel [%d][%p] NoneEvent\n", fd, fe);
 			channelMap_.erase(fd);
 			return update(fe, EPOLL_CTL_DEL);
 		}
@@ -72,7 +72,7 @@ int FdEventsEpoller::delFdEvent(FdEvent *fe)
 		return 0;
 
 	int fd = fe->fd();
-	printf("EpollPoller::removeChannel [%d][%0x]\n", fd, fe);
+	printf("EpollPoller::removeChannel [%d][%p]\n", fd, fe);
 	assert(hasChannel(fe) && "the remove socket must be already exist");
 	assert(getChannel(fd) == fe && "the remove socket must be already exist");
 	assert(fe->isNoneEvent());
