@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <errno.h>
+#include <unistd.h>
 #include <sys/epoll.h>
 
 
@@ -148,7 +149,7 @@ void FdEventsEpoller::fireActiveChannels(int numEvents, ChannelList& activeChann
 		if (events_[i].events & EPOLLOUT)   revents |= FDEVENT_OUT;
 		if (events_[i].events & EPOLLERR)   revents |= FDEVENT_ERR;
 		if (events_[i].events & EPOLLHUP)   revents |= FDEVENT_HUP;
-		channel->set_revents(revents);
+		fde->set_revents(revents);
 
 		activeChannels.push_back(fde);
 	}

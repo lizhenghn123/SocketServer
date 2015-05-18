@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <errno.h>
 #include "FdEvents.h"
 #include "Utils.h"
 using namespace std;
@@ -56,16 +57,42 @@ int socket_write(FdEvents *poller, FdEvent *fe)
 
 int socket_accept(FdEvents *poller, FdEvent *fe)
 {
-     int srvfd = fe->fd();
-     struct sockaddr_in addr;
-     int clientfd = zl::net::accept(srvfd, &addr);
-     printf("get one client [%d]\n", clientfd);
-     zl::net::setNonBlocking(clientfd);
+    int srvfd = fe->fd();
+    int max_accept = 0;
+    while(max_accept < 100)
+    {
+        struct sockaddr_in addr;
+        int clientfd = zl::net::accept(srvfd, &addr);
+        if(clientfd > 0)
+        {
+            printf("get one client [%d]\n", clientfd);
+            zl::net::setNonBlocking(clientfd);
 
-     poller->addFdEvent(clientfd, socket_read);
+            poller->addFdEvent(clientfd, socket_read);
 
-     const char *welcome = "hello world, welcome to connecting server\n";
-     zl::net::write(clientfd, welcome, strlen(welcome));
+            const char *welcome = "hello world, welcome to connecting server\n";
+            zl::net::write(clientfd, welcome, strlen(welcome));
+        }
+        else
+        {
+            switch(errno)
+            {
+            case EAGAIN:
+            #if EWOULDBLOCK != EAGAIN
+            case EWOULDBLOCK:
+            #endif
+            case EINTR:
+                break;
+            case EMFILE:  // out of fds
+                break;
+            default:
+                perror("socket_accept : ");
+                break;
+            }
+            break;
+        }
+    }
+
      return 0;
 }
 
