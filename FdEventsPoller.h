@@ -1,4 +1,15 @@
-﻿#ifndef ZL_FDEVENTS_POLLER_H
+﻿// ***********************************************************************
+// Filename         : FdEventsPoller.h
+// Author           : lizhenghn@gmail.com
+// Created          : 2015-05-18
+// Description      : I/O MultiPlexing 的 poll 实现
+//
+// Last Modified By : LIZHENG
+// Last Modified On : 2015-05-19
+//
+// Copyright (c) lizhenghn@gmail.com. All rights reserved.
+// ***********************************************************************
+#ifndef ZL_FDEVENTS_POLLER_H
 #define ZL_FDEVENTS_POLLER_H
 #include "FdEvents.h"
 #include <vector>
@@ -26,7 +37,7 @@ public:
 
 	virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
 
-	virtual const char* getName() const { return "linux_epoll"; }
+	virtual const char* getName() const { return "linux_poll"; }
 
 private:
 	void fireActiveChannels(int numEvents, ChannelList& fdevents) const;
