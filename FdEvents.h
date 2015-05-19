@@ -1,4 +1,15 @@
-﻿#ifndef ZL_FDEVENTS_H
+﻿// ***********************************************************************
+// Filename         : FdEvents.h
+// Author           : lizhenghn@gmail.com
+// Created          : 2015-05-17
+// Description      : 模仿lighttpd中的fdevents设计，实现FdEvent及FdEvents(I/O复用接口类)
+//
+// Last Modified By : LIZHENG
+// Last Modified On : 2015-05-19
+//
+// Copyright (c) lizhenghn@gmail.com. All rights reserved.
+// ***********************************************************************
+#ifndef ZL_FDEVENTS_H
 #define ZL_FDEVENTS_H
 #include <vector>
 #include <map>

@@ -1,4 +1,15 @@
-﻿#ifndef ZL_FDEVENTS_EPOLLER_H
+﻿// ***********************************************************************
+// Filename         : FdEventsEpoller.h
+// Author           : lizhenghn@gmail.com
+// Created          : 2015-05-17
+// Description      : I/O MultiPlexing 的 epoll 实现
+//
+// Last Modified By : LIZHENG
+// Last Modified On : 2015-05-17
+//
+// Copyright (c) lizhenghn@gmail.com. All rights reserved.
+// ***********************************************************************
+#ifndef ZL_FDEVENTS_EPOLLER_H
 #define ZL_FDEVENTS_EPOLLER_H
 #include "FdEvents.h"
 #include <set>

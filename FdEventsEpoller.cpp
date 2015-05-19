@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <sys/epoll.h>
 
-
 FdEventsEpoller::FdEventsEpoller()
 {
 	epollfd_ = epoll_create(1024);
@@ -126,13 +125,12 @@ int FdEventsEpoller::poll(std::vector<FdEvent *>& fdevents, int timeoutMs)
 		if (savedErrno != EINTR)
 		{
 			errno = savedErrno;
-			perror("fff :");
 			printf("FdEventsEpoller::poll: error [%d]\n", savedErrno);
 		}
 		return -1;
 	}
 
-	return fdevents.size();
+    return numEvents;
 }
 
 void FdEventsEpoller::fireActiveChannels(int numEvents, ChannelList& activeChannels) const

@@ -1,4 +1,15 @@
-﻿#ifndef ZL_NET_UTILS_H
+﻿// ***********************************************************************
+// Filename         : Utils.h
+// Author           : lizhenghn@gmail.com
+// Created          : 2015-05-14
+// Description      : socket相关api封装
+//
+// Last Modified By : LIZHENG
+// Last Modified On : 2015-05-14
+//
+// Copyright (c) lizhenghn@gmail.com. All rights reserved.
+// ***********************************************************************
+#ifndef ZL_NET_UTILS_H
 #define ZL_NET_UTILS_H
 #include <inttypes.h>
 #include <stdint.h>
