@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include "FdEventsEpoller.h"
+#include "FdEventsPoller.h"
 
 /*static*/ FdEvent*  FdEvent::newFdEvent(int fd)
 {
@@ -51,9 +52,9 @@ FdEvents* createFdEvents()
 {
 #ifdef FDEVENTS_TYPE_EPOLL
     return new FdEventsEpoller();
-#elif FDEVENTS_TYPE_POLL
-    //return new FdEventsPoller();
-#elif FDEVENTS_TYPE_SELECT
+#elif defined(FDEVENTS_TYPE_POLL)
+    return new FdEventsPoller();
+#elif defined(FDEVENTS_TYPE_SELECT)
     //return new FdEventsSelecter();
 #endif
 	return NULL;

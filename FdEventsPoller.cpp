@@ -34,7 +34,7 @@ int FdEventsPoller::addFdEvent(FdEvent *fe)
 int FdEventsPoller::modFdEvent(FdEvent *fde)
 {
 	int fd = fde->fd();
-	printf("SelectPoller::updateChannel[%d]\n", fd);
+	printf("FdEventsPoller::updateChannel[%d]\n", fd);
 
 	int events = fde->events();
 	int pevents = FDEVENT_NONE;
@@ -46,7 +46,7 @@ int FdEventsPoller::modFdEvent(FdEvent *fde)
 	{
 		assert(getChannel(fd) == fde);
 		int idx = channelIter_[fde];
-		printf("PollPoller::updateChannel  fd2 [%d][%d]\n", idx, channelIter_[fde]);
+		printf("FdEventsPoller::updateChannel  fd2 [%d][%d]\n", idx, channelIter_[fde]);
 		assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
 
 		struct pollfd& pfd = pollfds_[idx];
@@ -55,7 +55,7 @@ int FdEventsPoller::modFdEvent(FdEvent *fde)
 		pfd.revents = 0;
 		if (fde->isNoneEvent())
 		{
-			printf("PollPoller::updateChannel [%d][%p][%d] NoneEvent\n", fd, fde, pfd.events);
+			printf("FdEventsPoller::updateChannel [%d][%p][%d] NoneEvent\n", fd, fde, pfd.events);
 			pfd.fd = -fde->fd() - 1;
 		}
 	}
@@ -81,14 +81,15 @@ int FdEventsPoller::delFdEvent(FdEvent *fde)
 
 	int fd = fde->fd();
 	int idx = channelIter_[fde];
-	printf("PollPoller::removeChannel [%d][%d][%p]\n", fd, idx, fde);
+	printf("FdEventsPoller::removeChannel [%d][%d][%p]\n", fd, idx, fde);
 	assert(getChannel(fd) == fde && "the remove socket must be already exist");
 	assert(fde->isNoneEvent());
 	assert(0 <= idx && idx < static_cast<int>(pollfds_.size()));
 
 	const struct pollfd& pfd = pollfds_[idx];
+    assert(pfd.fd == fde->fd() || pfd.fd == -fde->fd() - 1);  // 直接调用delFdEvent或者先调用过modFdEvent
+    assert(pfd.events == fde->events() || fde->events() == FDEVENT_NONE);  // 同上
 	(void)(pfd);
-	assert(pfd.fd == -fde->fd() - 1 && pfd.events == fde->events());
 
 	size_t n = channelMap_.erase(fd);
 	(void)(n);
@@ -119,19 +120,19 @@ int FdEventsPoller::poll(std::vector<FdEvent *>& fdevents, int timeoutMs)
 	int savedErrno = errno;
 	if (numEvents > 0)
 	{
-		printf("FdEventsPoller::poll_once: events happended[%d]\n", numEvents);
+		printf("FdEventsPoller::poll: events happended[%d]\n", numEvents);
 		fireActiveChannels(numEvents, fdevents);
 	}
 	else if (numEvents == 0)
 	{
-		printf("FdEventsPoller::poll_once: nothing happended\n");
+		printf("FdEventsPoller::poll: nothing happended\n");
 	}
 	else
 	{
 		if (savedErrno != EINTR)
 		{
 			errno = savedErrno;
-			printf("FdEventsPoller::poll_once: error [%d]\n", errno);
+			printf("FdEventsPoller::poll: error [%d]\n", errno);
 		}
 	}
 
