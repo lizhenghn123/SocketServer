@@ -44,7 +44,7 @@ bool FdEvents::hasChannel(const FdEvent* channel) const
 FdEvent* FdEvents::getChannel(int sock) const
 {
     ChannelMap::const_iterator itr = channelMap_.find(sock);
-    if(itr == channelMap_.end())
+    if (itr == channelMap_.end())
         return NULL;
     return itr->second;
 }
@@ -58,5 +58,5 @@ FdEvents* createFdEvents()
 #elif defined(FDEVENTS_TYPE_SELECT)
     return new FdEventsSelecter();
 #endif
-	return NULL;
+    return NULL;
 }

@@ -31,9 +31,9 @@
 class  FdEvent;
 class  FdEvents;
 
-typedef int (*eventCallback)(FdEvents *poller, FdEvent *fe);
-typedef int (*readCallback)(FdEvents *poller, FdEvent *fe);
-typedef int (*writeCallback)(FdEvents *poller, FdEvent *fe);
+typedef int(*eventCallback)(FdEvents *poller, FdEvent *fe);
+typedef int(*readCallback)(FdEvents *poller, FdEvent *fe);
+typedef int(*writeCallback)(FdEvents *poller, FdEvent *fe);
 
 class FdEvent
 {
@@ -46,13 +46,13 @@ public:
     void set_fd(int fd)            { fd_ = fd; }
     int events() const             { return events_; }
     //void set_events(int events)    { revents_ = events; }
-    void enableReading()           { events_ |= (FDEVENT_IN|FDEVENT_PRI); }
+    void enableReading()           { events_ |= (FDEVENT_IN | FDEVENT_PRI); }
     void enableWriting()           { events_ |= FDEVENT_OUT; }
-    void enableAll()               { events_ |= (FDEVENT_IN|FDEVENT_PRI|FDEVENT_OUT); }
-    void disableReading()          { events_ &= ~(FDEVENT_IN|FDEVENT_PRI); }
+    void enableAll()               { events_ |= (FDEVENT_IN | FDEVENT_PRI | FDEVENT_OUT); }
+    void disableReading()          { events_ &= ~(FDEVENT_IN | FDEVENT_PRI); }
     void disableWriting()          { events_ &= ~FDEVENT_OUT; }
     void disableAll()              { events_ = FDEVENT_NONE; }
-    bool isNoneEvent() const       { return events_ == FDEVENT_NONE; } 
+    bool isNoneEvent() const       { return events_ == FDEVENT_NONE; }
     void set_revents(int revents)  { revents_ = revents; }
     int  revents() const           { return revents_; }
 
@@ -85,15 +85,15 @@ public:
     FdEvent* getChannel(int sock) const;
 
 public:
-	virtual FdEvent* addFdEvent(int fd, eventCallback cb) = 0;
+    virtual FdEvent* addFdEvent(int fd, eventCallback cb) = 0;
 
-	virtual int addFdEvent(FdEvent *fe) = 0;
-	virtual int modFdEvent(FdEvent *fe) = 0;
-	virtual int delFdEvent(FdEvent *fe) = 0;
+    virtual int addFdEvent(FdEvent *fe) = 0;
+    virtual int modFdEvent(FdEvent *fe) = 0;
+    virtual int delFdEvent(FdEvent *fe) = 0;
 
     virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs) = 0;
 
-	virtual const char* getName() const = 0;
+    virtual const char* getName() const = 0;
 
 protected:
     ChannelMap  channelMap_;

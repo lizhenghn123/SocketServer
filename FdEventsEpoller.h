@@ -18,29 +18,29 @@
 class FdEventsEpoller : public FdEvents
 {
 public:
-	FdEventsEpoller();
-	~FdEventsEpoller();
+    FdEventsEpoller();
+    ~FdEventsEpoller();
 
 public:
-	virtual FdEvent* addFdEvent(int fd, eventCallback cb);
+    virtual FdEvent* addFdEvent(int fd, eventCallback cb);
 
-	virtual int addFdEvent(FdEvent *fe);
-	virtual int modFdEvent(FdEvent *fe);
-	virtual int delFdEvent(FdEvent *fe);
+    virtual int addFdEvent(FdEvent *fe);
+    virtual int modFdEvent(FdEvent *fe);
+    virtual int delFdEvent(FdEvent *fe);
 
-	virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
+    virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
 
-	virtual const char* getName() const { return "linux_epoll"; }
-
-private:
-	bool update(FdEvent *fe, int operation);
-	void fireActiveChannels(int numEvents, ChannelList& fdevents) const;
+    virtual const char* getName() const { return "linux_epoll"; }
 
 private:
-	typedef std::vector<struct epoll_event> EpollEventList;
+    bool update(FdEvent *fe, int operation);
+    void fireActiveChannels(int numEvents, ChannelList& fdevents) const;
 
-	int  epollfd_;
-	EpollEventList events_;
+private:
+    typedef std::vector<struct epoll_event> EpollEventList;
+
+    int  epollfd_;
+    EpollEventList events_;
 };
 
 #endif /* ZL_FDEVENTS_EPOLLER_H */

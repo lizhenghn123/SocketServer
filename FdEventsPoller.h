@@ -26,28 +26,28 @@
 class FdEventsPoller : public FdEvents
 {
 public:
-	FdEventsPoller();
-	~FdEventsPoller();
+    FdEventsPoller();
+    ~FdEventsPoller();
 
 public:
-	virtual FdEvent* addFdEvent(int fd, eventCallback cb);
-	virtual int addFdEvent(FdEvent *fe);
-	virtual int modFdEvent(FdEvent *fe);
-	virtual int delFdEvent(FdEvent *fe);
+    virtual FdEvent* addFdEvent(int fd, eventCallback cb);
+    virtual int addFdEvent(FdEvent *fe);
+    virtual int modFdEvent(FdEvent *fe);
+    virtual int delFdEvent(FdEvent *fe);
 
-	virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
+    virtual int poll(std::vector<FdEvent *>& fdevents, int timeoutMs);
 
-	virtual const char* getName() const { return "linux_poll"; }
-
-private:
-	void fireActiveChannels(int numEvents, ChannelList& fdevents) const;
+    virtual const char* getName() const { return "linux_poll"; }
 
 private:
-	typedef std::vector<struct pollfd>         PollFdList;
-	typedef hash_map<FdEvent*, int>            ChannelIter;
+    void fireActiveChannels(int numEvents, ChannelList& fdevents) const;
 
-	PollFdList    pollfds_;
-	ChannelIter   channelIter_;
+private:
+    typedef std::vector<struct pollfd>         PollFdList;
+    typedef hash_map<FdEvent*, int>            ChannelIter;
+
+    PollFdList    pollfds_;
+    ChannelIter   channelIter_;
 };
 
 #endif /* ZL_FDEVENTS_POLLER_H */
