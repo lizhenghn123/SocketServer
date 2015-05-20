@@ -14,8 +14,8 @@
 #include <vector>
 #include <map>
 
-#define FDEVENTS_TYPE_EPOLL
-//#define FDEVENTS_TYPE_SELECT
+//#define FDEVENTS_TYPE_EPOLL
+#define FDEVENTS_TYPE_SELECT
 //#define FDEVENTS_TYPE_POLL
 //#define FDEVENTS_TYPE_KQUEUE
 //#define FDEVENTS_TYPE_POLL
