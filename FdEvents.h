@@ -40,7 +40,7 @@ class FdEvent
     friend class FdEvents;
 public:
     static FdEvent*  newFdEvent(int fd);
-
+    static void      deleteFdEvent(FdEvent *fde);
 public:
     int fd() const                 { return fd_; }
     void set_fd(int fd)            { fd_ = fd; }

@@ -12,6 +12,12 @@
     return new FdEvent(fd);
 }
 
+/*static*/ void deleteFdEvent(FdEvent *fde)
+{
+    delete fde;
+    fde = NULL;
+}
+
 FdEvent::FdEvent(int fd)
 {
     fd_ = fd;

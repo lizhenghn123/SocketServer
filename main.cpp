@@ -78,7 +78,7 @@ int socket_accept(FdEvents *poller, FdEvent *fe)
             switch (errno)
             {
             case EAGAIN:
-            if EWOULDBLOCK != EAGAIN
+            #if EWOULDBLOCK != EAGAIN
             case EWOULDBLOCK:
             #endif
             case EINTR:
