@@ -12,7 +12,7 @@
     return new FdEvent(fd);
 }
 
-/*static*/ void deleteFdEvent(FdEvent *fde)
+/*static*/ void FdEvent::deleteFdEvent(FdEvent *fde)
 {
     delete fde;
     fde = NULL;
@@ -38,7 +38,15 @@ FdEvents::FdEvents()
 
 FdEvents::~FdEvents()
 {
-
+    for(ChannelMap::iterator it = channelMap_.begin(); it != channelMap_.end(); ++it)
+    {
+        FdEvent *fde = it->second;
+        if(fde)
+        {
+            delete fde;
+            fde = NULL;
+        }
+    }
 }
 
 bool FdEvents::hasChannel(const FdEvent* channel) const

@@ -80,7 +80,10 @@ int FdEventsDevpoller::delFdEvent(FdEvent *fe)
     //ZL_UNUSED(n);
     assert(n == 1);
 
-    return update(fe, POLLREMOVE);
+    update(fe, POLLREMOVE);
+    
+    FdEvent::deleteFdEvent(fe); 
+    return 0;
 }
 
 bool FdEventsDevpoller::update(FdEvent *fde, int operation)

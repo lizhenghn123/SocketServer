@@ -74,7 +74,10 @@ int FdEventsKqueuer::delFdEvent(FdEvent *fe)
     //ZL_UNUSED(n);
     assert(n == 1);
 
-    return update(fe, EV_DELETE);
+    update(fe, EV_DELETE);
+        
+    FdEvent::deleteFdEvent(fe); 
+    return 0;
 }
 
 bool FdEventsKqueuer::update(FdEvent *fe, int operation)

@@ -101,6 +101,7 @@ int FdEventsSelecter::delFdEvent(FdEvent *fe)
     FD_CLR(fd, &select_writefds_);
     FD_CLR(fd, &select_exceptfds_);
 
+    FdEvent::deleteFdEvent(fe); 
     return 0;
 }
 

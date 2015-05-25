@@ -111,6 +111,8 @@ int FdEventsPoller::delFdEvent(FdEvent *fde)
 
     pollfds_.pop_back();
     channelIter_.erase(fde);
+
+    FdEvent::deleteFdEvent(fde); 
     return 0;
 }
 

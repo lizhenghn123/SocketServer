@@ -79,7 +79,10 @@ int FdEventsEpoller::delFdEvent(FdEvent *fe)
     //ZL_UNUSED(n);
     assert(n == 1);
 
-    return update(fe, EPOLL_CTL_DEL);
+    update(fe, EPOLL_CTL_DEL);
+
+    FdEvent::deleteFdEvent(fe); 
+    return 0;
 }
 
 bool FdEventsEpoller::update(FdEvent *fe, int operation)
@@ -98,6 +101,7 @@ bool FdEventsEpoller::update(FdEvent *fe, int operation)
         printf("EpollPoller::update error, [socket %d][op %d]\n", fe->fd(), operation);
         return false;
     }
+
     return true;
 }
 
