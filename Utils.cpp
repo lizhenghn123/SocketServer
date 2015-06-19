@@ -87,8 +87,38 @@ SocketFd  createSocketAndListen(const char *ip, short port, int backlog/* = 31*/
 
 int       accept(SocketFd fd, struct sockaddr_in *addr)
 {
-    int addrlen = sizeof(*addr);
+    socklen_t addrlen = static_cast<socklen_t>(sizeof *addr);
     int connfd = ::accept(fd, (struct sockaddr *)addr, (socklen_t *)&addrlen);
+    if (connfd < 0)
+    {
+        int savedErrno = errno;
+        printf("happen error when ::accept [%d]\n", savedErrno);
+        switch (savedErrno)
+        {
+        case EAGAIN:
+        case ECONNABORTED:
+        case EINTR:
+        case EPROTO:
+        case EPERM:
+        case EMFILE:
+            errno = savedErrno;
+            break;
+        case EBADF:
+        case EFAULT:
+        case EINVAL:
+        case ENFILE:
+        case ENOBUFS:
+        case ENOMEM:
+        case ENOTSOCK:
+        case EOPNOTSUPP:
+            // unexpected errors
+            printf("unexpected error of ::accept [%d]\n", savedErrno);
+            break;
+        default:
+            printf("unknown error of ::accept [%d]\n", savedErrno);
+            break;
+        }
+    }
     return connfd;
 }
 
@@ -157,6 +187,12 @@ int       setReuseAddr(SocketFd fd, bool reuse/* = true*/)
 {
     int optval = reuse ? 1 : 0;
     return ::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval));
+}
+
+int       setKeepAlive(SocketFd fd, bool alive/* = true*/)
+{
+    int optval = alive ? 1 : 0;
+    return ::setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&optval, static_cast<socklen_t>(sizeof(optval)));
 }
 
 void      getSockAddr(const char* ip, uint16_t port, struct sockaddr_in* addr)

@@ -45,6 +45,7 @@ void      shutdownWrite(SocketFd fd);
 int       setNonBlocking(SocketFd fd, bool nonBlocking = true);
 int       setNoDelay(SocketFd fd, bool noDelay = true);
 int       setReuseAddr(SocketFd fd, bool flag = true);
+int       setKeepAlive(SocketFd fd, bool alive = true);
 
 void      getSockAddr(const char* ip, uint16_t port, struct sockaddr_in* addr);
 struct sockaddr_in getLocalAddr(SocketFd sockfd);
